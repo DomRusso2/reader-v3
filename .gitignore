@@ -1,0 +1,5 @@
+checkpoints/
+*.pth
+__pycache__/
+hf_card/
+SUBMISSION.md

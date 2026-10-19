@@ -1,0 +1,760 @@
+{
+ "description": "Reader V3: Reader v2 continued on 256 px tiles (30k it), then on 384 px tiles (20k it, this config), batch 10, same data + labels.",
+ "mode": "flat",
+ "model_type": "vesuvius_unet_3d_stem_2d",
+ "model_config": {
+  "autoconfigure": true,
+  "basic_encoder_block": "BasicBlockD",
+  "basic_decoder_block": "ConvBlock",
+  "stem_channels": 16,
+  "z_projection_mode": "none",
+  "features_per_stage": [
+   32,
+   64,
+   128,
+   256,
+   320,
+   320
+  ],
+  "n_blocks_per_stage": [
+   1,
+   3,
+   4,
+   6,
+   6,
+   6
+  ],
+  "n_conv_per_stage_decoder": [
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "strides": [
+   [
+    1,
+    1
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    2
+   ]
+  ],
+  "pool_op_kernel_sizes": [
+   [
+    1,
+    1
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    2
+   ]
+  ]
+ },
+ "targets": {
+  "ink": {
+   "activation": "none",
+   "out_channels": 1,
+   "z_projection_mode": "none"
+  }
+ },
+ "in_channels": 1,
+ "patch_size": [
+  17,
+  384,
+  384
+ ],
+ "patch_overlap": 0.25,
+ "patch_min_labeled_coverage": 0.0,
+ "flat_z_window_jitter": {
+  "enabled": true,
+  "window_depth": 17,
+  "max_offset": 2,
+  "probability": 1.0,
+  "padding": "forbidden"
+ },
+ "image_normalization": {
+  "mode": "robust_mad",
+  "percentile_lower": 1.0,
+  "percentile_upper": 99.0
+ },
+ "augmentation_preset": "default",
+ "augmentation_rotation_axes": [
+  0
+ ],
+ "loss": {
+  "bce_label_smoothing": 0.5,
+  "dice_label_smoothing": 0.0
+ },
+ "optimizer": "sgd",
+ "learning_rate": 0.003,
+ "weight_decay": 3e-05,
+ "scheduler": {
+  "name": "diffusers_cosine_warmup"
+ },
+ "warmup_steps": 200,
+ "grad_clip": 1.0,
+ "mixed_precision": "fp16",
+ "batch_size": 10,
+ "num_iterations": 20000,
+ "seed": 42,
+ "sampling_strategy": "fixed_scroll_prior_stratified",
+ "fixed_scroll_prior": {
+  "seed": 42,
+  "target_batch_counts": {
+   "0139": 3,
+   "1667": 1,
+   "Paris4": 1,
+   "0814": 1,
+   "0009B": 1,
+   "0343P": 1,
+   "0500P2": 1,
+   "0172": 1
+  }
+ },
+ "sampling_audit_every": 200,
+ "best_checkpoint_metric": "val_balanced_accuracy",
+ "save_every": 2000,
+ "val_every": 2000,
+ "val_steps": 32,
+ "val_preview_batches": 1,
+ "log_every": 50,
+ "dataloader_workers": 12,
+ "pin_memory": true,
+ "verify_finite_gradients_steps": 0,
+ "max_amp_overflow_events": 0,
+ "out_dir": "<ROOT>/data/v2ctx_long384/train",
+ "datasets": [
+  {
+   "segments_path": "<ROOT>/data/ink9um/labels/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "pherc0139-w016",
+    "pherc0139-w035",
+    "pherc0139-w039",
+    "pherc0139-w040",
+    "pherc0139-w041",
+    "pherc0139-w043"
+   ],
+   "surface_volume_paths": {
+    "pherc0139-w016": "<ROOT>/data/ink9um/volumes_w016/w016_9um_iso.zarr",
+    "pherc0139-w035": "<ROOT>/data/corpus/pherc0139-w035_iso9.zarr",
+    "pherc0139-w039": "<ROOT>/data/corpus/pherc0139-w039_iso9.zarr",
+    "pherc0139-w040": "<ROOT>/data/corpus/pherc0139-w040_iso9.zarr",
+    "pherc0139-w041": "<ROOT>/data/corpus/pherc0139-w041_iso9.zarr",
+    "pherc0139-w043": "<ROOT>/data/corpus/pherc0139-w043_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "0139",
+   "sampling_physical_segment_keys": {
+    "pherc0139-w016": "0139:w016",
+    "pherc0139-w035": "0139:w035",
+    "pherc0139-w039": "0139:w039",
+    "pherc0139-w040": "0139:w040",
+    "pherc0139-w041": "0139:w041",
+    "pherc0139-w043": "0139:w043"
+   },
+   "sampling_representation_keys": {
+    "pherc0139-w016": "public_2p4_level2_zmean4:pherc0139-w016",
+    "pherc0139-w035": "public_2p4_level2_zmean4:pherc0139-w035",
+    "pherc0139-w039": "public_2p4_level2_zmean4:pherc0139-w039",
+    "pherc0139-w040": "public_2p4_level2_zmean4:pherc0139-w040",
+    "pherc0139-w041": "public_2p4_level2_zmean4:pherc0139-w041",
+    "pherc0139-w043": "public_2p4_level2_zmean4:pherc0139-w043"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/pseudo/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "pherc0139-w017",
+    "pherc0139-w028",
+    "pherc0139-w029"
+   ],
+   "surface_volume_paths": {
+    "pherc0139-w017": "<ROOT>/data/teacher/w017_iso9.zarr",
+    "pherc0139-w028": "<ROOT>/data/teacher/w028_iso9.zarr",
+    "pherc0139-w029": "<ROOT>/data/teacher/w029_0139_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "0139",
+   "sampling_physical_segment_keys": {
+    "pherc0139-w017": "0139:w017",
+    "pherc0139-w028": "0139:w028",
+    "pherc0139-w029": "0139:w029"
+   },
+   "sampling_representation_keys": {
+    "pherc0139-w017": "public_2p4_level2_zmean4:pherc0139-w017",
+    "pherc0139-w028": "public_2p4_level2_zmean4:pherc0139-w028",
+    "pherc0139-w029": "public_2p4_level2_zmean4:pherc0139-w029"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/ink9um/labels/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "pherc1667-w013",
+    "pherc1667-w018",
+    "pherc1667-w023",
+    "pherc1667-w031"
+   ],
+   "surface_volume_paths": {
+    "pherc1667-w013": "<ROOT>/data/corpus/pherc1667-w013_iso9.zarr",
+    "pherc1667-w018": "<ROOT>/data/ink9um/volumes_pherc1667-w018/w018_9um_iso.zarr",
+    "pherc1667-w023": "<ROOT>/data/corpus/pherc1667-w023_iso9.zarr",
+    "pherc1667-w031": "<ROOT>/data/corpus/pherc1667-w031_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "1667",
+   "sampling_physical_segment_keys": {
+    "pherc1667-w013": "1667:w013",
+    "pherc1667-w018": "1667:w018",
+    "pherc1667-w023": "1667:w023",
+    "pherc1667-w031": "1667:w031"
+   },
+   "sampling_representation_keys": {
+    "pherc1667-w013": "public_2p4_level2_zmean4:pherc1667-w013",
+    "pherc1667-w018": "public_2p4_level2_zmean4:pherc1667-w018",
+    "pherc1667-w023": "public_2p4_level2_zmean4:pherc1667-w023",
+    "pherc1667-w031": "public_2p4_level2_zmean4:pherc1667-w031"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/pseudo/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "pherc1667-w028",
+    "pherc1667-w029"
+   ],
+   "surface_volume_paths": {
+    "pherc1667-w028": "<ROOT>/data/teacher/p1667w028_iso9.zarr",
+    "pherc1667-w029": "<ROOT>/data/teacher/p1667w029_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "1667",
+   "sampling_physical_segment_keys": {
+    "pherc1667-w028": "1667:w028",
+    "pherc1667-w029": "1667:w029"
+   },
+   "sampling_representation_keys": {
+    "pherc1667-w028": "public_2p4_level2_zmean4:pherc1667-w028",
+    "pherc1667-w029": "public_2p4_level2_zmean4:pherc1667-w029"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/ink9um/labels/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "phercparis4-w00",
+    "phercparis4-w01",
+    "phercparis4-w02",
+    "phercparis4-w03",
+    "phercparis4-w05",
+    "phercparis4-w06",
+    "phercparis4-w07",
+    "phercparis4-w09"
+   ],
+   "surface_volume_paths": {
+    "phercparis4-w00": "<ROOT>/data/corpus/phercparis4-w00_iso9.zarr",
+    "phercparis4-w01": "<ROOT>/data/corpus/phercparis4-w01_iso9.zarr",
+    "phercparis4-w02": "<ROOT>/data/corpus/phercparis4-w02_iso9.zarr",
+    "phercparis4-w03": "<ROOT>/data/corpus/phercparis4-w03_iso9.zarr",
+    "phercparis4-w05": "<ROOT>/data/corpus/phercparis4-w05_iso9.zarr",
+    "phercparis4-w06": "<ROOT>/data/corpus/phercparis4-w06_iso9.zarr",
+    "phercparis4-w07": "<ROOT>/data/corpus/phercparis4-w07_iso9.zarr",
+    "phercparis4-w09": "<ROOT>/data/corpus/phercparis4-w09_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "Paris4",
+   "sampling_physical_segment_keys": {
+    "phercparis4-w00": "Paris4:w00",
+    "phercparis4-w01": "Paris4:w01",
+    "phercparis4-w02": "Paris4:w02",
+    "phercparis4-w03": "Paris4:w03",
+    "phercparis4-w05": "Paris4:w05",
+    "phercparis4-w06": "Paris4:w06",
+    "phercparis4-w07": "Paris4:w07",
+    "phercparis4-w09": "Paris4:w09"
+   },
+   "sampling_representation_keys": {
+    "phercparis4-w00": "public_2p4_level2_zmean4:phercparis4-w00",
+    "phercparis4-w01": "public_2p4_level2_zmean4:phercparis4-w01",
+    "phercparis4-w02": "public_2p4_level2_zmean4:phercparis4-w02",
+    "phercparis4-w03": "public_2p4_level2_zmean4:phercparis4-w03",
+    "phercparis4-w05": "public_2p4_level2_zmean4:phercparis4-w05",
+    "phercparis4-w06": "public_2p4_level2_zmean4:phercparis4-w06",
+    "phercparis4-w07": "public_2p4_level2_zmean4:phercparis4-w07",
+    "phercparis4-w09": "public_2p4_level2_zmean4:phercparis4-w09"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/pseudo/aligned-scrollprizeorg-21slices",
+   "segments": [
+    "pherc0814-46527"
+   ],
+   "surface_volume_paths": {
+    "pherc0814-46527": "<ROOT>/data/teacher/p0814_iso9.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "public_2p4_level2_zmean4",
+   "sampling_scroll": "0814",
+   "sampling_physical_segment_keys": {
+    "pherc0814-46527": "0814:46527"
+   },
+   "sampling_representation_keys": {
+    "pherc0814-46527": "public_2p4_level2_zmean4:pherc0814-46527"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/ink9um/labels/native9-scrollprizeorg-21slices",
+   "segments": [
+    "w035",
+    "w039",
+    "w040",
+    "w041",
+    "w044"
+   ],
+   "surface_volume_paths": {
+    "w035": "<ROOT>/data/corpus/native9/w035.zarr",
+    "w039": "<ROOT>/data/corpus/native9/w039.zarr",
+    "w040": "<ROOT>/data/ink9um/volumes/9.362um-1.2m-113keV-volume-20250728140407.zarr",
+    "w041": "<ROOT>/data/corpus/native9/w041.zarr",
+    "w044": "<ROOT>/data/corpus/native9/w044.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "native_9p362_level0",
+   "sampling_scroll": "0139",
+   "sampling_physical_segment_keys": {
+    "w035": "0139:w035",
+    "w039": "0139:w039",
+    "w040": "0139:w040",
+    "w041": "0139:w041",
+    "w044": "0139:w044"
+   },
+   "sampling_representation_keys": {
+    "w035": "native_9p362_level0:w035",
+    "w039": "native_9p362_level0:w039",
+    "w040": "native_9p362_level0:w040",
+    "w041": "native_9p362_level0:w041",
+    "w044": "native_9p362_level0:w044"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/p009b/labels",
+   "segments": [
+    "20250510172804",
+    "20250511200236",
+    "20250919064353",
+    "20250919123506",
+    "20250919124722",
+    "20250919124917",
+    "20250919125302",
+    "20250919125605",
+    "20250919130642",
+    "20250919131352",
+    "20250919131642",
+    "20250919132115",
+    "20250919135433",
+    "20250919135915"
+   ],
+   "surface_volume_paths": {
+    "20250510172804": "<ROOT>/data/p009b/20250510172804/sv864.zarr",
+    "20250511200236": "<ROOT>/data/p009b/20250511200236/sv864.zarr",
+    "20250919064353": "<ROOT>/data/p009b/20250919064353/sv864.zarr",
+    "20250919123506": "<ROOT>/data/p009b/20250919123506/sv864.zarr",
+    "20250919124722": "<ROOT>/data/p009b/20250919124722/sv864.zarr",
+    "20250919124917": "<ROOT>/data/p009b/20250919124917/sv864.zarr",
+    "20250919125302": "<ROOT>/data/p009b/20250919125302/sv864.zarr",
+    "20250919125605": "<ROOT>/data/p009b/20250919125605/sv864.zarr",
+    "20250919130642": "<ROOT>/data/p009b/20250919130642/sv864.zarr",
+    "20250919131352": "<ROOT>/data/p009b/20250919131352/sv864.zarr",
+    "20250919131642": "<ROOT>/data/p009b/20250919131642/sv864.zarr",
+    "20250919132115": "<ROOT>/data/p009b/20250919132115/sv864.zarr",
+    "20250919135433": "<ROOT>/data/p009b/20250919135433/sv864.zarr",
+    "20250919135915": "<ROOT>/data/p009b/20250919135915/sv864.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "native_8p64_116kev",
+   "sampling_scroll": "0009B",
+   "sampling_physical_segment_keys": {
+    "20250510172804": "0009B:20250510172804",
+    "20250511200236": "0009B:20250511200236",
+    "20250919064353": "0009B:20250919064353",
+    "20250919123506": "0009B:20250919123506",
+    "20250919124722": "0009B:20250919124722",
+    "20250919124917": "0009B:20250919124917",
+    "20250919125302": "0009B:20250919125302",
+    "20250919125605": "0009B:20250919125605",
+    "20250919130642": "0009B:20250919130642",
+    "20250919131352": "0009B:20250919131352",
+    "20250919131642": "0009B:20250919131642",
+    "20250919132115": "0009B:20250919132115",
+    "20250919135433": "0009B:20250919135433",
+    "20250919135915": "0009B:20250919135915"
+   },
+   "sampling_representation_keys": {
+    "20250510172804": "native_8p64_116kev:20250510172804",
+    "20250511200236": "native_8p64_116kev:20250511200236",
+    "20250919064353": "native_8p64_116kev:20250919064353",
+    "20250919123506": "native_8p64_116kev:20250919123506",
+    "20250919124722": "native_8p64_116kev:20250919124722",
+    "20250919124917": "native_8p64_116kev:20250919124917",
+    "20250919125302": "native_8p64_116kev:20250919125302",
+    "20250919125605": "native_8p64_116kev:20250919125605",
+    "20250919130642": "native_8p64_116kev:20250919130642",
+    "20250919131352": "native_8p64_116kev:20250919131352",
+    "20250919131642": "native_8p64_116kev:20250919131642",
+    "20250919132115": "native_8p64_116kev:20250919132115",
+    "20250919135433": "native_8p64_116kev:20250919135433",
+    "20250919135915": "native_8p64_116kev:20250919135915"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/v2/0139/labels",
+   "segments": [
+    "20250108000000-w025_2025010863",
+    "20250108000001-w026_2025010854",
+    "20250108000002-w027_2025010845",
+    "20250108000003-w028_2025010836",
+    "20250108000005-w030_2025010818",
+    "20250223000000-w059_2025022312",
+    "20251226000000-w055_2025122611",
+    "20260112000000-w043_2026011217",
+    "20260115000001-w056_2026011514",
+    "20260126000000-w045_2026012619",
+    "20260127000000-w057_2026012713",
+    "20260130000000-w031_2026013019",
+    "20260203000000-w032_2026020303",
+    "20260206000000-w042_2026020613",
+    "20260206000002-w054_2026020617",
+    "20260210000000-w058_2026021020",
+    "20260219000000-w033_2026021913",
+    "20260219000001-w048_2026021912",
+    "20260227000000-w052_2026022705",
+    "20260302000001-w050_2026030220"
+   ],
+   "surface_volume_paths": {
+    "20250108000000-w025_2025010863": "<ROOT>/data/v2/0139/20250108000000-w025_2025010863/sv.zarr",
+    "20250108000001-w026_2025010854": "<ROOT>/data/v2/0139/20250108000001-w026_2025010854/sv.zarr",
+    "20250108000002-w027_2025010845": "<ROOT>/data/v2/0139/20250108000002-w027_2025010845/sv.zarr",
+    "20250108000003-w028_2025010836": "<ROOT>/data/v2/0139/20250108000003-w028_2025010836/sv.zarr",
+    "20250108000005-w030_2025010818": "<ROOT>/data/v2/0139/20250108000005-w030_2025010818/sv.zarr",
+    "20250223000000-w059_2025022312": "<ROOT>/data/v2/0139/20250223000000-w059_2025022312/sv.zarr",
+    "20251226000000-w055_2025122611": "<ROOT>/data/v2/0139/20251226000000-w055_2025122611/sv.zarr",
+    "20260112000000-w043_2026011217": "<ROOT>/data/v2/0139/20260112000000-w043_2026011217/sv.zarr",
+    "20260115000001-w056_2026011514": "<ROOT>/data/v2/0139/20260115000001-w056_2026011514/sv.zarr",
+    "20260126000000-w045_2026012619": "<ROOT>/data/v2/0139/20260126000000-w045_2026012619/sv.zarr",
+    "20260127000000-w057_2026012713": "<ROOT>/data/v2/0139/20260127000000-w057_2026012713/sv.zarr",
+    "20260130000000-w031_2026013019": "<ROOT>/data/v2/0139/20260130000000-w031_2026013019/sv.zarr",
+    "20260203000000-w032_2026020303": "<ROOT>/data/v2/0139/20260203000000-w032_2026020303/sv.zarr",
+    "20260206000000-w042_2026020613": "<ROOT>/data/v2/0139/20260206000000-w042_2026020613/sv.zarr",
+    "20260206000002-w054_2026020617": "<ROOT>/data/v2/0139/20260206000002-w054_2026020617/sv.zarr",
+    "20260210000000-w058_2026021020": "<ROOT>/data/v2/0139/20260210000000-w058_2026021020/sv.zarr",
+    "20260219000000-w033_2026021913": "<ROOT>/data/v2/0139/20260219000000-w033_2026021913/sv.zarr",
+    "20260219000001-w048_2026021912": "<ROOT>/data/v2/0139/20260219000001-w048_2026021912/sv.zarr",
+    "20260227000000-w052_2026022705": "<ROOT>/data/v2/0139/20260227000000-w052_2026022705/sv.zarr",
+    "20260302000001-w050_2026030220": "<ROOT>/data/v2/0139/20260302000001-w050_2026030220/sv.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "native_v2_0139",
+   "sampling_scroll": "0139",
+   "sampling_physical_segment_keys": {
+    "20250108000000-w025_2025010863": "0139:20250108000000-w025_2025010863",
+    "20250108000001-w026_2025010854": "0139:20250108000001-w026_2025010854",
+    "20250108000002-w027_2025010845": "0139:20250108000002-w027_2025010845",
+    "20250108000003-w028_2025010836": "0139:20250108000003-w028_2025010836",
+    "20250108000005-w030_2025010818": "0139:20250108000005-w030_2025010818",
+    "20250223000000-w059_2025022312": "0139:20250223000000-w059_2025022312",
+    "20251226000000-w055_2025122611": "0139:20251226000000-w055_2025122611",
+    "20260112000000-w043_2026011217": "0139:20260112000000-w043_2026011217",
+    "20260115000001-w056_2026011514": "0139:20260115000001-w056_2026011514",
+    "20260126000000-w045_2026012619": "0139:20260126000000-w045_2026012619",
+    "20260127000000-w057_2026012713": "0139:20260127000000-w057_2026012713",
+    "20260130000000-w031_2026013019": "0139:20260130000000-w031_2026013019",
+    "20260203000000-w032_2026020303": "0139:20260203000000-w032_2026020303",
+    "20260206000000-w042_2026020613": "0139:20260206000000-w042_2026020613",
+    "20260206000002-w054_2026020617": "0139:20260206000002-w054_2026020617",
+    "20260210000000-w058_2026021020": "0139:20260210000000-w058_2026021020",
+    "20260219000000-w033_2026021913": "0139:20260219000000-w033_2026021913",
+    "20260219000001-w048_2026021912": "0139:20260219000001-w048_2026021912",
+    "20260227000000-w052_2026022705": "0139:20260227000000-w052_2026022705",
+    "20260302000001-w050_2026030220": "0139:20260302000001-w050_2026030220"
+   },
+   "sampling_representation_keys": {
+    "20250108000000-w025_2025010863": "native_v2_0139:20250108000000-w025_2025010863",
+    "20250108000001-w026_2025010854": "native_v2_0139:20250108000001-w026_2025010854",
+    "20250108000002-w027_2025010845": "native_v2_0139:20250108000002-w027_2025010845",
+    "20250108000003-w028_2025010836": "native_v2_0139:20250108000003-w028_2025010836",
+    "20250108000005-w030_2025010818": "native_v2_0139:20250108000005-w030_2025010818",
+    "20250223000000-w059_2025022312": "native_v2_0139:20250223000000-w059_2025022312",
+    "20251226000000-w055_2025122611": "native_v2_0139:20251226000000-w055_2025122611",
+    "20260112000000-w043_2026011217": "native_v2_0139:20260112000000-w043_2026011217",
+    "20260115000001-w056_2026011514": "native_v2_0139:20260115000001-w056_2026011514",
+    "20260126000000-w045_2026012619": "native_v2_0139:20260126000000-w045_2026012619",
+    "20260127000000-w057_2026012713": "native_v2_0139:20260127000000-w057_2026012713",
+    "20260130000000-w031_2026013019": "native_v2_0139:20260130000000-w031_2026013019",
+    "20260203000000-w032_2026020303": "native_v2_0139:20260203000000-w032_2026020303",
+    "20260206000000-w042_2026020613": "native_v2_0139:20260206000000-w042_2026020613",
+    "20260206000002-w054_2026020617": "native_v2_0139:20260206000002-w054_2026020617",
+    "20260210000000-w058_2026021020": "native_v2_0139:20260210000000-w058_2026021020",
+    "20260219000000-w033_2026021913": "native_v2_0139:20260219000000-w033_2026021913",
+    "20260219000001-w048_2026021912": "native_v2_0139:20260219000001-w048_2026021912",
+    "20260227000000-w052_2026022705": "native_v2_0139:20260227000000-w052_2026022705",
+    "20260302000001-w050_2026030220": "native_v2_0139:20260302000001-w050_2026030220"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/v2/0814/labels",
+   "segments": [
+    "20250925161630-auto_grown_20250925161630",
+    "20250925182632-auto_grown_20250925182632",
+    "20250925204843-auto_grown_20250925204843",
+    "20250925212701-auto_grown_20250925212701",
+    "20250925222237-auto_grown_20250925222237",
+    "20250926051122-auto_grown_20250926051122",
+    "20250926165636-auto_trace_20250926165636",
+    "20250926203608-auto_grown_20250926203608"
+   ],
+   "surface_volume_paths": {
+    "20250925161630-auto_grown_20250925161630": "<ROOT>/data/v2/0814/20250925161630-auto_grown_20250925161630/sv.zarr",
+    "20250925182632-auto_grown_20250925182632": "<ROOT>/data/v2/0814/20250925182632-auto_grown_20250925182632/sv.zarr",
+    "20250925204843-auto_grown_20250925204843": "<ROOT>/data/v2/0814/20250925204843-auto_grown_20250925204843/sv.zarr",
+    "20250925212701-auto_grown_20250925212701": "<ROOT>/data/v2/0814/20250925212701-auto_grown_20250925212701/sv.zarr",
+    "20250925222237-auto_grown_20250925222237": "<ROOT>/data/v2/0814/20250925222237-auto_grown_20250925222237/sv.zarr",
+    "20250926051122-auto_grown_20250926051122": "<ROOT>/data/v2/0814/20250926051122-auto_grown_20250926051122/sv.zarr",
+    "20250926165636-auto_trace_20250926165636": "<ROOT>/data/v2/0814/20250926165636-auto_trace_20250926165636/sv.zarr",
+    "20250926203608-auto_grown_20250926203608": "<ROOT>/data/v2/0814/20250926203608-auto_grown_20250926203608/sv.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "native_v2_0814",
+   "sampling_scroll": "0814",
+   "sampling_physical_segment_keys": {
+    "20250925161630-auto_grown_20250925161630": "0814:20250925161630-auto_grown_20250925161630",
+    "20250925182632-auto_grown_20250925182632": "0814:20250925182632-auto_grown_20250925182632",
+    "20250925204843-auto_grown_20250925204843": "0814:20250925204843-auto_grown_20250925204843",
+    "20250925212701-auto_grown_20250925212701": "0814:20250925212701-auto_grown_20250925212701",
+    "20250925222237-auto_grown_20250925222237": "0814:20250925222237-auto_grown_20250925222237",
+    "20250926051122-auto_grown_20250926051122": "0814:20250926051122-auto_grown_20250926051122",
+    "20250926165636-auto_trace_20250926165636": "0814:20250926165636-auto_trace_20250926165636",
+    "20250926203608-auto_grown_20250926203608": "0814:20250926203608-auto_grown_20250926203608"
+   },
+   "sampling_representation_keys": {
+    "20250925161630-auto_grown_20250925161630": "native_v2_0814:20250925161630-auto_grown_20250925161630",
+    "20250925182632-auto_grown_20250925182632": "native_v2_0814:20250925182632-auto_grown_20250925182632",
+    "20250925204843-auto_grown_20250925204843": "native_v2_0814:20250925204843-auto_grown_20250925204843",
+    "20250925212701-auto_grown_20250925212701": "native_v2_0814:20250925212701-auto_grown_20250925212701",
+    "20250925222237-auto_grown_20250925222237": "native_v2_0814:20250925222237-auto_grown_20250925222237",
+    "20250926051122-auto_grown_20250926051122": "native_v2_0814:20250926051122-auto_grown_20250926051122",
+    "20250926165636-auto_trace_20250926165636": "native_v2_0814:20250926165636-auto_trace_20250926165636",
+    "20250926203608-auto_grown_20250926203608": "native_v2_0814:20250926203608-auto_grown_20250926203608"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/v2/0500P2/labels",
+   "segments": [
+    "20250609204953-z_dbg_gen_00612",
+    "20250611132918-z_dbg_gen_00302_inp_hr",
+    "20250611133823-z_dbg_gen_00130_inp_hr",
+    "20250611134135-z_dbg_gen_00331_inp_hr",
+    "20250611153340-z_dbg_gen_00275",
+    "20250611153346-z_dbg_gen_00286_inp_hr",
+    "20250611153347-z_dbg_gen_00105_inp_hr",
+    "20250611154256-z_dbg_gen_00354_inp_hr",
+    "20250611161023-z_dbg_gen_00205_inp_hr",
+    "20250611161415-z_dbg_gen_00411_inp_hr",
+    "20250611170257-z_dbg_gen_00308_inp_hr",
+    "20250611171318-z_dbg_gen_00440_inp_hr",
+    "20250611171745-z_dbg_gen_00225_inp_hr",
+    "20250611172135-z_dbg_gen_00346_inp_hr",
+    "20250611173014-z_dbg_gen_00506_inp_hr",
+    "20250628074500-500P2_front",
+    "20250716055227-z_dbg_gen_00260_inp_hr",
+    "20250716055228-z_dbg_gen_00333_inp_hr"
+   ],
+   "surface_volume_paths": {
+    "20250609204953-z_dbg_gen_00612": "<ROOT>/data/v2/0500P2/20250609204953-z_dbg_gen_00612/sv.zarr",
+    "20250611132918-z_dbg_gen_00302_inp_hr": "<ROOT>/data/v2/0500P2/20250611132918-z_dbg_gen_00302_inp_hr/sv.zarr",
+    "20250611133823-z_dbg_gen_00130_inp_hr": "<ROOT>/data/v2/0500P2/20250611133823-z_dbg_gen_00130_inp_hr/sv.zarr",
+    "20250611134135-z_dbg_gen_00331_inp_hr": "<ROOT>/data/v2/0500P2/20250611134135-z_dbg_gen_00331_inp_hr/sv.zarr",
+    "20250611153340-z_dbg_gen_00275": "<ROOT>/data/v2/0500P2/20250611153340-z_dbg_gen_00275/sv.zarr",
+    "20250611153346-z_dbg_gen_00286_inp_hr": "<ROOT>/data/v2/0500P2/20250611153346-z_dbg_gen_00286_inp_hr/sv.zarr",
+    "20250611153347-z_dbg_gen_00105_inp_hr": "<ROOT>/data/v2/0500P2/20250611153347-z_dbg_gen_00105_inp_hr/sv.zarr",
+    "20250611154256-z_dbg_gen_00354_inp_hr": "<ROOT>/data/v2/0500P2/20250611154256-z_dbg_gen_00354_inp_hr/sv.zarr",
+    "20250611161023-z_dbg_gen_00205_inp_hr": "<ROOT>/data/v2/0500P2/20250611161023-z_dbg_gen_00205_inp_hr/sv.zarr",
+    "20250611161415-z_dbg_gen_00411_inp_hr": "<ROOT>/data/v2/0500P2/20250611161415-z_dbg_gen_00411_inp_hr/sv.zarr",
+    "20250611170257-z_dbg_gen_00308_inp_hr": "<ROOT>/data/v2/0500P2/20250611170257-z_dbg_gen_00308_inp_hr/sv.zarr",
+    "20250611171318-z_dbg_gen_00440_inp_hr": "<ROOT>/data/v2/0500P2/20250611171318-z_dbg_gen_00440_inp_hr/sv.zarr",
+    "20250611171745-z_dbg_gen_00225_inp_hr": "<ROOT>/data/v2/0500P2/20250611171745-z_dbg_gen_00225_inp_hr/sv.zarr",
+    "20250611172135-z_dbg_gen_00346_inp_hr": "<ROOT>/data/v2/0500P2/20250611172135-z_dbg_gen_00346_inp_hr/sv.zarr",
+    "20250611173014-z_dbg_gen_00506_inp_hr": "<ROOT>/data/v2/0500P2/20250611173014-z_dbg_gen_00506_inp_hr/sv.zarr",
+    "20250628074500-500P2_front": "<ROOT>/data/v2/0500P2/20250628074500-500P2_front/sv.zarr",
+    "20250716055227-z_dbg_gen_00260_inp_hr": "<ROOT>/data/v2/0500P2/20250716055227-z_dbg_gen_00260_inp_hr/sv.zarr",
+    "20250716055228-z_dbg_gen_00333_inp_hr": "<ROOT>/data/v2/0500P2/20250716055228-z_dbg_gen_00333_inp_hr/sv.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "native_v2_0500P2",
+   "sampling_scroll": "0500P2",
+   "sampling_physical_segment_keys": {
+    "20250609204953-z_dbg_gen_00612": "0500P2:20250609204953-z_dbg_gen_00612",
+    "20250611132918-z_dbg_gen_00302_inp_hr": "0500P2:20250611132918-z_dbg_gen_00302_inp_hr",
+    "20250611133823-z_dbg_gen_00130_inp_hr": "0500P2:20250611133823-z_dbg_gen_00130_inp_hr",
+    "20250611134135-z_dbg_gen_00331_inp_hr": "0500P2:20250611134135-z_dbg_gen_00331_inp_hr",
+    "20250611153340-z_dbg_gen_00275": "0500P2:20250611153340-z_dbg_gen_00275",
+    "20250611153346-z_dbg_gen_00286_inp_hr": "0500P2:20250611153346-z_dbg_gen_00286_inp_hr",
+    "20250611153347-z_dbg_gen_00105_inp_hr": "0500P2:20250611153347-z_dbg_gen_00105_inp_hr",
+    "20250611154256-z_dbg_gen_00354_inp_hr": "0500P2:20250611154256-z_dbg_gen_00354_inp_hr",
+    "20250611161023-z_dbg_gen_00205_inp_hr": "0500P2:20250611161023-z_dbg_gen_00205_inp_hr",
+    "20250611161415-z_dbg_gen_00411_inp_hr": "0500P2:20250611161415-z_dbg_gen_00411_inp_hr",
+    "20250611170257-z_dbg_gen_00308_inp_hr": "0500P2:20250611170257-z_dbg_gen_00308_inp_hr",
+    "20250611171318-z_dbg_gen_00440_inp_hr": "0500P2:20250611171318-z_dbg_gen_00440_inp_hr",
+    "20250611171745-z_dbg_gen_00225_inp_hr": "0500P2:20250611171745-z_dbg_gen_00225_inp_hr",
+    "20250611172135-z_dbg_gen_00346_inp_hr": "0500P2:20250611172135-z_dbg_gen_00346_inp_hr",
+    "20250611173014-z_dbg_gen_00506_inp_hr": "0500P2:20250611173014-z_dbg_gen_00506_inp_hr",
+    "20250628074500-500P2_front": "0500P2:20250628074500-500P2_front",
+    "20250716055227-z_dbg_gen_00260_inp_hr": "0500P2:20250716055227-z_dbg_gen_00260_inp_hr",
+    "20250716055228-z_dbg_gen_00333_inp_hr": "0500P2:20250716055228-z_dbg_gen_00333_inp_hr"
+   },
+   "sampling_representation_keys": {
+    "20250609204953-z_dbg_gen_00612": "native_v2_0500P2:20250609204953-z_dbg_gen_00612",
+    "20250611132918-z_dbg_gen_00302_inp_hr": "native_v2_0500P2:20250611132918-z_dbg_gen_00302_inp_hr",
+    "20250611133823-z_dbg_gen_00130_inp_hr": "native_v2_0500P2:20250611133823-z_dbg_gen_00130_inp_hr",
+    "20250611134135-z_dbg_gen_00331_inp_hr": "native_v2_0500P2:20250611134135-z_dbg_gen_00331_inp_hr",
+    "20250611153340-z_dbg_gen_00275": "native_v2_0500P2:20250611153340-z_dbg_gen_00275",
+    "20250611153346-z_dbg_gen_00286_inp_hr": "native_v2_0500P2:20250611153346-z_dbg_gen_00286_inp_hr",
+    "20250611153347-z_dbg_gen_00105_inp_hr": "native_v2_0500P2:20250611153347-z_dbg_gen_00105_inp_hr",
+    "20250611154256-z_dbg_gen_00354_inp_hr": "native_v2_0500P2:20250611154256-z_dbg_gen_00354_inp_hr",
+    "20250611161023-z_dbg_gen_00205_inp_hr": "native_v2_0500P2:20250611161023-z_dbg_gen_00205_inp_hr",
+    "20250611161415-z_dbg_gen_00411_inp_hr": "native_v2_0500P2:20250611161415-z_dbg_gen_00411_inp_hr",
+    "20250611170257-z_dbg_gen_00308_inp_hr": "native_v2_0500P2:20250611170257-z_dbg_gen_00308_inp_hr",
+    "20250611171318-z_dbg_gen_00440_inp_hr": "native_v2_0500P2:20250611171318-z_dbg_gen_00440_inp_hr",
+    "20250611171745-z_dbg_gen_00225_inp_hr": "native_v2_0500P2:20250611171745-z_dbg_gen_00225_inp_hr",
+    "20250611172135-z_dbg_gen_00346_inp_hr": "native_v2_0500P2:20250611172135-z_dbg_gen_00346_inp_hr",
+    "20250611173014-z_dbg_gen_00506_inp_hr": "native_v2_0500P2:20250611173014-z_dbg_gen_00506_inp_hr",
+    "20250628074500-500P2_front": "native_v2_0500P2:20250628074500-500P2_front",
+    "20250716055227-z_dbg_gen_00260_inp_hr": "native_v2_0500P2:20250716055227-z_dbg_gen_00260_inp_hr",
+    "20250716055228-z_dbg_gen_00333_inp_hr": "native_v2_0500P2:20250716055228-z_dbg_gen_00333_inp_hr"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/v2/0343P/labels",
+   "segments": [
+    "20250511003658-tifxyz",
+    "20250902170435--5_b2",
+    "20250902170441--4_b2",
+    "20250902170447--3_b2",
+    "20250902171202--2_b2",
+    "20250902171204--1_b2"
+   ],
+   "surface_volume_paths": {
+    "20250511003658-tifxyz": "<ROOT>/data/v2/0343P/20250511003658-tifxyz/sv.zarr",
+    "20250902170435--5_b2": "<ROOT>/data/v2/0343P/20250902170435--5_b2/sv.zarr",
+    "20250902170441--4_b2": "<ROOT>/data/v2/0343P/20250902170441--4_b2/sv.zarr",
+    "20250902170447--3_b2": "<ROOT>/data/v2/0343P/20250902170447--3_b2/sv.zarr",
+    "20250902171202--2_b2": "<ROOT>/data/v2/0343P/20250902171202--2_b2/sv.zarr",
+    "20250902171204--1_b2": "<ROOT>/data/v2/0343P/20250902171204--1_b2/sv.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "native_v2_0343P",
+   "sampling_scroll": "0343P",
+   "sampling_physical_segment_keys": {
+    "20250511003658-tifxyz": "0343P:20250511003658-tifxyz",
+    "20250902170435--5_b2": "0343P:20250902170435--5_b2",
+    "20250902170441--4_b2": "0343P:20250902170441--4_b2",
+    "20250902170447--3_b2": "0343P:20250902170447--3_b2",
+    "20250902171202--2_b2": "0343P:20250902171202--2_b2",
+    "20250902171204--1_b2": "0343P:20250902171204--1_b2"
+   },
+   "sampling_representation_keys": {
+    "20250511003658-tifxyz": "native_v2_0343P:20250511003658-tifxyz",
+    "20250902170435--5_b2": "native_v2_0343P:20250902170435--5_b2",
+    "20250902170441--4_b2": "native_v2_0343P:20250902170441--4_b2",
+    "20250902170447--3_b2": "native_v2_0343P:20250902170447--3_b2",
+    "20250902171202--2_b2": "native_v2_0343P:20250902171202--2_b2",
+    "20250902171204--1_b2": "native_v2_0343P:20250902171204--1_b2"
+   }
+  },
+  {
+   "segments_path": "<ROOT>/data/v2/0172/labels",
+   "segments": [
+    "20250917143559-w062_20250917143559205_fl",
+    "20250926112011-w078_20250926112011918_fl",
+    "20250926113336-w079_20250926113336891_fl",
+    "20250926114310-w080_20250926114310705_fl"
+   ],
+   "surface_volume_paths": {
+    "20250917143559-w062_20250917143559205_fl": "<ROOT>/data/v2/0172/20250917143559-w062_20250917143559205_fl/sv.zarr",
+    "20250926112011-w078_20250926112011918_fl": "<ROOT>/data/v2/0172/20250926112011-w078_20250926112011918_fl/sv.zarr",
+    "20250926113336-w079_20250926113336891_fl": "<ROOT>/data/v2/0172/20250926113336-w079_20250926113336891_fl/sv.zarr",
+    "20250926114310-w080_20250926114310705_fl": "<ROOT>/data/v2/0172/20250926114310-w080_20250926114310705_fl/sv.zarr"
+   },
+   "volume_scale": 0,
+   "source_family": "native_v2_0172",
+   "sampling_scroll": "0172",
+   "sampling_physical_segment_keys": {
+    "20250917143559-w062_20250917143559205_fl": "0172:20250917143559-w062_20250917143559205_fl",
+    "20250926112011-w078_20250926112011918_fl": "0172:20250926112011-w078_20250926112011918_fl",
+    "20250926113336-w079_20250926113336891_fl": "0172:20250926113336-w079_20250926113336891_fl",
+    "20250926114310-w080_20250926114310705_fl": "0172:20250926114310-w080_20250926114310705_fl"
+   },
+   "sampling_representation_keys": {
+    "20250917143559-w062_20250917143559205_fl": "native_v2_0172:20250917143559-w062_20250917143559205_fl",
+    "20250926112011-w078_20250926112011918_fl": "native_v2_0172:20250926112011-w078_20250926112011918_fl",
+    "20250926113336-w079_20250926113336891_fl": "native_v2_0172:20250926113336-w079_20250926113336891_fl",
+    "20250926114310-w080_20250926114310705_fl": "native_v2_0172:20250926114310-w080_20250926114310705_fl"
+   }
+  }
+ ],
+ "checkpoint": "<ROOT>/data/v2ctx_v2_256_long256/train/ckpt_030000.pth",
+ "weights_only": true,
+ "patch_cache_filename": "<ROOT>/data/v2ctx_long384/train/patches_384.json",
+ "ema": {
+  "enabled": false,
+  "decay": 0.999,
+  "start_step": 0,
+  "update_every_steps": 1,
+  "validate": false,
+  "save_in_checkpoint": false
+ },
+ "volume_auth_json": null,
+ "crop_size": [
+  17,
+  384,
+  384
+ ],
+ "stitch_factor": 1,
+ "use_stitched_forward": false,
+ "stitched_gradient_checkpointing": true
+}

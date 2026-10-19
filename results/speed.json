@@ -1,0 +1,21 @@
+{
+ "input": "1447 w058 suite region 3826x1564 = 5.98 Mpx, 24 layers, one layer order",
+ "gpu": "NVIDIA GeForce RTX 5070 Ti",
+ "reader-v3": {
+  "seconds": 13.96,
+  "mpx_per_s": 0.429
+ },
+ "reader-v2": {
+  "seconds": 20.66,
+  "mpx_per_s": 0.29
+ },
+ "v8-in (stride 21)": {
+  "seconds": 447.74,
+  "mpx_per_s": 0.013
+ },
+ "hecate": {
+  "seconds": 62.91,
+  "mpx_per_s": 0.095,
+  "note": "includes model load (separate process) + 9.6 um resample"
+ }
+}
