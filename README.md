@@ -101,6 +101,29 @@ Same pixels, same masks, same metric for every model (`results/`). PHerc0841 and
 **The clearest letters in every figure above, the fewest false alarms, the fastest, and ahead of Reader v2 on every held-out
 test.** Per-region AUC for every model on every window is in `results/`.
 
+## Checking that the larger context does not invent strokes
+
+Training on 384 px tiles gives the model more of the sheet around each stroke. I ran three checks to make sure it uses that
+context to read the ink, not to invent strokes or close a letter (a c turned into an o), each time next to Reader v2
+(128 px) and on scrolls neither model was trained on.
+
+![e and c letters on PHerc0841: the sharp 2.4 µm reference, Reader v2 and Reader V3](figures/check_e_c_0841.png)
+
+**Open letters stay open.** PHerc0841 also has a 2.4 µm scan, much sharper than the 9 µm scan the models read. On e's and
+c's that are clearly visible in the sharp scan (the team's ink map), Reader V3 keeps the letters open the same way Reader
+v2 does, and draws one c more cleanly than v2. Nothing edited.
+
+![Gaps cut into real strokes, Reader v2 and Reader V3 before and after the cut](figures/check_gaps.png)
+
+**Cut gaps stay open.** I cut gaps about the size of a letter opening (0.8 to 1 mm) into real PHerc1447 strokes and filled
+them with blank papyrus from the same sheet. In these examples Reader V3 keeps the gap open just like Reader v2.
+
+![PHerc1447 w058 read by Reader V3 in forward and in reverse layer order, next to the human ink labels](figures/check_reverse_1447.png)
+
+**The strokes come from the scan.** To invent letters the model would have to imagine whole Greek letters. With the same
+layers read in reverse order, the letter shapes go away (PHerc1447 w058, human ink labels from
+[Youssef Nader's 1447 surfaces](https://huggingface.co/datasets/YoussefMoNader/ink-8um-pherc1447-surfaces)).
+
 ## Get it and run it
 
 If you already run the team's `ink_9um` models, only the checkpoint changes:
